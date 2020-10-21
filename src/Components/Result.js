@@ -5,6 +5,7 @@ import NavBar from "./NavBar";
 
 function Result() {
   const [points, setPoints] = useState("");
+  const [offerings, setOfferings] = useState("");
   const [weapons, setWeapons] = useState("");
   const [gold, setGold] = useState("");
   const [iron, setIron] = useState("");
@@ -66,6 +67,7 @@ function Result() {
   useEffect(() => {
     if (
       !!points &&
+      !!offerings &&
       !!weapons &&
       !!gold &&
       !!iron &&
@@ -75,6 +77,7 @@ function Result() {
       const actuatStock = Math.floor(parseInt(stock) / 2);
       const result =
         parseInt(points) +
+        parseInt(offerings) +
         calcWeapons(weapons) +
         parseInt(gold) +
         parseInt(iron) +
@@ -85,7 +88,17 @@ function Result() {
     } else {
       setResult("");
     }
-  }, [weapons, valk, result, points, gold, iron, stock, gangAbilities]);
+  }, [
+    weapons,
+    offerings,
+    valk,
+    result,
+    points,
+    gold,
+    iron,
+    stock,
+    gangAbilities,
+  ]);
 
   return (
     <Flex flexDirection="column" height="100%">
@@ -96,6 +109,13 @@ function Result() {
           name="points"
           value={points}
           onChange={(e) => setPoints(e.target.value)}
+          required
+        />
+        <Field
+          label="Подношения"
+          name="offerings"
+          value={offerings}
+          onChange={(e) => setOfferings(e.target.value)}
           required
         />
         <Field

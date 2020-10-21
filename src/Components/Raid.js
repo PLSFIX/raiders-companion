@@ -8,13 +8,12 @@ function Raid() {
   const [weapons, setWeapons] = useState("");
   const [gang, setGang] = useState("");
   const [gangAbilities, setGangAbilities] = useState("");
-  const [valk, setValk] = useState("");
   const [result, setResult] = useState("");
   const reset = useCallback(() => {
     setDice("");
     setWeapons("");
     setGang("");
-    setValk("");
+    setGangAbilities("");
   }, []);
   useEffect(() => {
     if (!!weapons && !!gang) {
@@ -22,13 +21,12 @@ function Raid() {
         (isNaN(parseInt(dice)) ? 0 : parseInt(dice)) +
         parseInt(weapons) +
         parseInt(gang) +
-        (isNaN(parseInt(gangAbilities)) ? 0 : parseInt(gangAbilities)) +
-        (isNaN(parseInt(valk)) ? 0 : parseInt(valk));
+        (isNaN(parseInt(gangAbilities)) ? 0 : parseInt(gangAbilities));
       setResult(result);
     } else {
       setResult("");
     }
-  }, [dice, weapons, gang, gangAbilities, valk, result]);
+  }, [dice, weapons, gang, gangAbilities, result]);
 
   return (
     <Flex flexDirection="column" height="100%">
@@ -59,12 +57,6 @@ function Raid() {
           name="gangAbilities"
           value={gangAbilities}
           onChange={(e) => setGangAbilities(e.target.value)}
-        />
-        <Field
-          label="Валькирии"
-          name="valk"
-          value={valk}
-          onChange={(e) => setValk(e.target.value)}
         />
       </Flex>
       <Flex
