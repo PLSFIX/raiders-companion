@@ -1,178 +1,100 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Heading, Flex } from "rebass";
+import React from "react";
+import { observer } from "mobx-react-lite";
+import { Heading, Flex, Button } from "rebass";
 import Field from "./Field";
 import NavBar from "./NavBar";
+import { useRootStore } from "../Models/Root";
 
-function Result() {
-  const [points, setPoints] = useState("");
-  const [offerings, setOfferings] = useState("");
-  const [weapons, setWeapons] = useState("");
-  const [gold, setGold] = useState("");
-  const [iron, setIron] = useState("");
-  const [stock, setStock] = useState("");
-  const [valk, setValk] = useState("");
-  const [gangAbilities, setGangAbilities] = useState("");
-  const [result, setResult] = useState("");
-  const reset = useCallback(() => {
-    setPoints("");
-    setWeapons("");
-    setGold("");
-    setIron("");
-    setStock("");
-    setValk("");
-    setGangAbilities("");
-  }, []);
-  const calcValc = (val) => {
-    switch (val) {
-      case "0":
-      case "1":
-        return 0;
-      case "2":
-        return 1;
-      case "3":
-        return 2;
-      case "4":
-        return 4;
-      case "5":
-        return 7;
-      case "6":
-        return 10;
-      case "7":
-        return 15;
-      default:
-        return 15;
-    }
+const Result = observer(() => {
+  const { Results } = useRootStore();
+  const onChnage = (field) => (e) => {
+    Results.editField(field, e.target.value);
   };
-  const calcWeapons = (val) => {
-    switch (val) {
-      case "10":
-      case "9":
-        return 6;
-      case "8":
-      case "7":
-      case "6":
-        return 4;
-      case "5":
-      case "4":
-      case "3":
-        return 2;
-      case "2":
-      case "1":
-      case "0":
-        return 0;
-      default:
-        return 6;
-    }
-  };
-  useEffect(() => {
-    if (
-      !!points &&
-      !!offerings &&
-      !!weapons &&
-      !!gold &&
-      !!iron &&
-      !!stock &&
-      !!valk
-    ) {
-      const actuatStock = Math.floor(parseInt(stock) / 2);
-      const result =
-        parseInt(points) +
-        parseInt(offerings) +
-        calcWeapons(weapons) +
-        parseInt(gold) +
-        parseInt(iron) +
-        actuatStock +
-        calcValc(valk) +
-        (isNaN(parseInt(gangAbilities)) ? 0 : parseInt(gangAbilities));
-      setResult(result);
-    } else {
-      setResult("");
-    }
-  }, [
-    weapons,
-    offerings,
-    valk,
-    result,
-    points,
-    gold,
-    iron,
-    stock,
-    gangAbilities,
-  ]);
 
   return (
     <Flex flexDirection="column" height="100%">
-      <NavBar reset={reset} />
+      <NavBar reset={Results.resetGame} />
       <Flex p={10} flexDirection="column" flexShrink={0} mt={60}>
         <Field
           label="Очки"
           name="points"
-          value={points}
-          onChange={(e) => setPoints(e.target.value)}
+          value={Results.points}
+          onChange={onChnage("points")}
           required
         />
         <Field
           label="Подношения"
           name="offerings"
-          value={offerings}
-          onChange={(e) => setOfferings(e.target.value)}
+          value={Results.offerings}
+          onChange={onChnage("offerings")}
           required
         />
         <Field
           label="Вооружение"
           name="weapons"
-          value={weapons}
-          onChange={(e) => setWeapons(e.target.value)}
+          value={Results.weapons}
+          onChange={onChnage("weapons")}
           required
         />
         <Field
           label="Золото"
           name="gold"
-          value={gold}
-          onChange={(e) => setGold(e.target.value)}
+          value={Results.gold}
+          onChange={onChnage("gold")}
           required
         />
         <Field
           label="Железо"
           name="iron"
-          value={iron}
-          onChange={(e) => setIron(e.target.value)}
+          value={Results.iron}
+          onChange={onChnage("iron")}
           required
         />
         <Field
           label="Скот"
           name="stock"
-          value={stock}
-          onChange={(e) => setStock(e.target.value)}
+          value={Results.stock}
+          onChange={onChnage("stock")}
           required
         />
         <Field
           label="Валькирии"
           name="valk"
-          value={valk}
-          onChange={(e) => setValk(e.target.value)}
+          value={Results.valk}
+          onChange={onChnage("valk")}
           required
         />
-        <Field
-          label="Способности отряда"
-          name="gangAbilities"
-          value={gangAbilities}
-          onChange={(e) => setGangAbilities(e.target.value)}
-        />
+        {Results.gangAbilities.map((field, index) => (
+          <Field
+            key={`gangAbilities${index}`}
+            label="Способности отряда"
+            name={`gangAbilities${index}`}
+            value={Results.gangAbilities[index]}
+            onChange={(e) => Results.editGangAbility(index, e.target.value)}
+          />
+        ))}
+        <Flex justifyContent="center" mt={10}>
+          <Button variant="primary" mr={2} onClick={Results.removeGangAbility}>
+            - способность
+          </Button>
+          <Button variant="primary" onClick={Results.addGangAbility}>
+            + способность
+          </Button>
+        </Flex>
       </Flex>
       <Flex p={10} alignItems="center" justifyContent="center" flexShrink={0}>
-        {result === "" ? (
+        {Results.gameResult === null ? (
           <Heading fontSize={20} color="red">
             Заполни все необходимые поля!
           </Heading>
         ) : (
           <Heading fontSize={95} color="primary">
-            {result}
+            {Results.gameResult}
           </Heading>
         )}
       </Flex>
     </Flex>
   );
-}
+});
 
 export default Result;
